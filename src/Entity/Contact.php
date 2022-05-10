@@ -129,7 +129,7 @@ class Contact
         return $this;
     }
 
-    public function isActivite(): ?bool
+    public function getActivite(): ?bool
     {
         return $this->activite;
     }
