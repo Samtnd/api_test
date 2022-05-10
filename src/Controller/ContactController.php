@@ -139,6 +139,14 @@ class ContactController extends AbstractController
             return $this->json('The contact must be of legal age to be added or edited' , 404);
         }
 
+        $telephone = $contact->getTelephone();
+
+        if(preg_match('/^[0-9]{10}+$/', $telephone)) {
+        } 
+        else {
+                return $this->json('Please enter a correct phone number' , 404);
+        } 
+
         $entityManager->flush();
 
         $data = [
