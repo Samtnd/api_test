@@ -73,7 +73,7 @@ class ContactController extends AbstractController
             ->find($id);
 
         if (!$contact){
-            return $this->json('No project found for id' . $id, 404);
+            return $this->json('No contact found for id' . $id, 404);
         }
 
         $data = [
@@ -91,4 +91,39 @@ class ContactController extends AbstractController
         
     }
 
+    /**
+     * @Route("/contact/{id}", name="contact_edit", methods={"PUT"})
+     */
+    public function edit(Request $request, int $id): Response {
+        $entityManager = $this->getDoctrine()->getManager();
+        $contact = $entityManager->getRepository(Contact::class)->find($id);
+
+        if (!$contact){
+            return $this->json('No contact found for id' . $id, 404);
+        }
+
+        $contact->setNom($request->request->get('nom'));
+        $contact->setPrenom($request->request->get('prenom'));
+        $contact->setEmail($request->request->get('email'));
+        $contact->setAdresse($request->request->get('adresse'));
+        $contact->setTelephone($request->request->get('telephone'));
+        $contact->setAge($request->request->get('age'));
+        $contact->setActivite($request->request->get('activite'));
+        $entityManager->flush();
+
+        $data = [
+            'id' => $contact->getId(),
+            'nom' => $contact->getNom(),
+            'prenom' => $contact->getPrenom(),
+            'email' => $contact->getEmail(),
+            'adresse' => $contact->getAdresse(),
+            'telephone' => $contact->getTelephone(),
+            'age' => $contact->getAge(),
+            'activite' => $contact->getActivite(),
+
+        ];
+
+        return $this->json($data);
+    }
+    
 }
