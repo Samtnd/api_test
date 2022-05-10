@@ -80,6 +80,18 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.12"
     },
+    "friendsofsymfony/rest-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "2.2",
+            "ref": "fa845143b7e0a4c70aedd1a88c549e6d977e9ae5"
+        },
+        "files": [
+            "config/packages/fos_rest.yaml"
+        ]
+    },
     "jms/metadata": {
         "version": "2.6.1"
     },
@@ -221,6 +233,9 @@
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
     },
+    "symfony/password-hasher": {
+        "version": "v5.4.8"
+    },
     "symfony/polyfill-intl-grapheme": {
         "version": "v1.25.0"
     },
@@ -258,6 +273,9 @@
     "symfony/runtime": {
         "version": "v5.4.8"
     },
+    "symfony/security-core": {
+        "version": "v5.4.8"
+    },
     "symfony/service-contracts": {
         "version": "v2.5.1"
     },
@@ -275,5 +293,11 @@
     },
     "symfony/yaml": {
         "version": "v5.4.3"
+    },
+    "willdurand/jsonp-callback-validator": {
+        "version": "v2.0.0"
+    },
+    "willdurand/negotiation": {
+        "version": "3.1.0"
     }
 }
