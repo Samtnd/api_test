@@ -57,12 +57,14 @@ class ContactController extends AbstractController
         $contact->setAge($request->request->get('age'));
         $contact->setActivite($request->request->get('activite'));
 
+        
         $entityManager->persist($contact);
         $entityManager->flush();
 
         return $this->json('Created new contact successfully with id ' . $contact->getId());
 
     }
+
 
     /**
      * @Route("/contact/{id}", name="contact_show", methods={"GET"})
@@ -125,5 +127,21 @@ class ContactController extends AbstractController
 
         return $this->json($data);
     }
-    
+
+    /**
+     * @Route("/contact/{id}", name="contact_delete", methods={"DELETE"})
+     */
+    public function delete(int $id): Response{
+        $entityManager = $this->getDoctrine()->getManager();
+        $contact= $entityManager->getRepository(Contact::class)->find($id);
+
+        if (!$contact){
+            return $this->json('No contact found for id' . $id, 404);
+        }
+
+        $entityManager->remove($contact);
+        $entityManager->flush();
+
+        return $this->json('The contact was successfully deleted' . $id);
+    }
 }

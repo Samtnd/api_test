@@ -44,6 +44,7 @@ class Contact
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Min(18)
      */
     private $age;
 
