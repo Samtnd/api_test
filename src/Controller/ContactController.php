@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Contact;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Persistence\ManagerRegistry;
 
 
 
@@ -15,6 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ContactController extends AbstractController
 {
+
+
     /**
      * @Route("/contact", name="contact_index", methods={"GET"})
      */
@@ -42,12 +46,17 @@ class ContactController extends AbstractController
         return $this->json($data);
     }
 
+    function validating($telephone){
+        
+        
+    }
+
     /**
      * @Route("/contact", name="contact_new", methods={"POST"})
      */
     public function create(Request $request): Response{
         $entityManager = $this->getDoctrine()->getManager();
-
+        
         $contact = new Contact();
         $contact->setNom($request->request->get('nom'));
         $contact->setPrenom($request->request->get('prenom'));
@@ -56,7 +65,21 @@ class ContactController extends AbstractController
         $contact->setTelephone($request->request->get('telephone'));
         $contact->setAge($request->request->get('age'));
         $contact->setActivite($request->request->get('activite'));
+        
+        
+        //$contact = $entityManager->getRepository(Contact::class)->findBy($contact->getAge());
 
+        if($contact->getAge() < 18){
+            return $this->json('The contact must be of legal age to be added' , 404);
+        }
+
+        $telephone = $contact->getTelephone();
+
+        if(preg_match('/^[0-9]{10}+$/', $telephone)) {
+        } 
+        else {
+                return $this->json('Please enter a correct phone number' , 404);
+        } 
         
         $entityManager->persist($contact);
         $entityManager->flush();
@@ -75,7 +98,7 @@ class ContactController extends AbstractController
             ->find($id);
 
         if (!$contact){
-            return $this->json('No contact found for id' . $id, 404);
+            return $this->json('No contact found for id ' . $id, 404);
         }
 
         $data = [
@@ -101,7 +124,7 @@ class ContactController extends AbstractController
         $contact = $entityManager->getRepository(Contact::class)->find($id);
 
         if (!$contact){
-            return $this->json('No contact found for id' . $id, 404);
+            return $this->json('No contact found for id ' . $id, 404);
         }
 
         $contact->setNom($request->request->get('nom'));
@@ -111,6 +134,11 @@ class ContactController extends AbstractController
         $contact->setTelephone($request->request->get('telephone'));
         $contact->setAge($request->request->get('age'));
         $contact->setActivite($request->request->get('activite'));
+
+        if($contact->getAge() < 18){
+            return $this->json('The contact must be of legal age to be added or edited' , 404);
+        }
+
         $entityManager->flush();
 
         $data = [
@@ -136,12 +164,12 @@ class ContactController extends AbstractController
         $contact= $entityManager->getRepository(Contact::class)->find($id);
 
         if (!$contact){
-            return $this->json('No contact found for id' . $id, 404);
+            return $this->json('No contact found for id ' . $id, 404);
         }
 
         $entityManager->remove($contact);
         $entityManager->flush();
 
-        return $this->json('The contact was successfully deleted' . $id);
+        return $this->json('The contact ' . $id . ' was successfully deleted ' );
     }
 }

@@ -2,8 +2,11 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 use App\Repository\ContactRepository;
 use Doctrine\ORM\Mapping as ORM;
+
 
 /**
  * @ORM\Entity(repositoryClass=ContactRepository::class)
@@ -44,7 +47,9 @@ class Contact
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\Min(18)
+     * @Assert\GreaterThan(
+     *      value = 18
+     * ) 
      */
     private $age;
 
@@ -141,4 +146,17 @@ class Contact
 
         return $this;
     }
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('age', new Assert\GreaterThanOrEqual(array(
+            'value' => 18,
+        )));
+    }
+
+    function validatingInter($telephone){
+        $valid_number = filter_var($telephone, FILTER_SANITIZE_NUMBER_INT);
+    }
+
+    
 }
