@@ -64,7 +64,8 @@ class ContactController extends AbstractController
         $contact->setAdresse($request->request->get('adresse'));
         $contact->setTelephone($request->request->get('telephone'));
         $contact->setAge($request->request->get('age'));
-        $contact->setActivite($request->request->get('activite'));
+        $contact->setActivite(true);
+        
         
         
         //$contact = $entityManager->getRepository(Contact::class)->findBy($contact->getAge());
@@ -140,12 +141,25 @@ class ContactController extends AbstractController
         }
 
         $telephone = $contact->getTelephone();
-
+        $valid_number = filter_var($telephone, FILTER_SANITIZE_NUMBER_INT);
         if(preg_match('/^[0-9]{10}+$/', $telephone)) {
         } 
         else {
                 return $this->json('Please enter a correct phone number' , 404);
         } 
+
+        $activate = $contact->getActivite();
+
+        if($activate == 'inactif'){
+           $contact->setActivite(false);
+        }
+
+        if($activate == 'actif'){
+            $contact->setActivite(true);
+         }
+
+    
+
 
         $entityManager->flush();
 
@@ -157,6 +171,34 @@ class ContactController extends AbstractController
             'adresse' => $contact->getAdresse(),
             'telephone' => $contact->getTelephone(),
             'age' => $contact->getAge(),
+            'activite' => $contact->getActivite(),
+
+        ];
+
+        return $this->json($data);
+    }
+
+    /**
+     * @Route("/contact/{id}/deactivate", name="contact_deactivate", methods={"PUT"})
+     */
+    public function deactivate(Request $request, int $id): Response{
+        $entityManager = $this->getDoctrine()->getManager();
+        $contact = $entityManager->getRepository(Contact::class)->find($id);
+
+        $contact->setActivite($request->request->get('activite'));
+
+        if (!$contact){
+            return $this->json('No contact found for id ' . $id, 404);
+        }
+        
+        $activate = $contact->getActivite();
+
+        if($activate == 0){
+            return $this->json('Contact with id ' . $id . ' has been deactivated ' );
+        }
+
+        $entityManager->flush();
+        $data = [
             'activite' => $contact->getActivite(),
 
         ];

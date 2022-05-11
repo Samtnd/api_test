@@ -1,0 +1,41 @@
+entities:
+    Contact:
+        class: App\Entity\Contact
+        prefix_directory: null
+        prefix_route: null
+        voter: true
+        fields:
+            - id
+            - nom
+            - prenom
+            - email
+            - adresse
+            - telephone
+            - age
+            - activite
+            - { property: Contact, twig_filters: [ "join(',')"] }
+        forms:
+            - id
+            - nom
+            - prenom
+            - email
+            - adresse
+            - telephone
+            - age
+            - activite
+            
+        search:
+            pagination: true
+            multi_select: true
+            filter_view:
+                activate: true
+        create:
+            activate: true
+        read:
+            activate: true
+        update:
+            activate: true
+            multi_select: true
+        delete:
+            activate: true
+            multi_select: true
