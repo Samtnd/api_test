@@ -152,6 +152,7 @@ class ContactController extends AbstractController
 
         if($activate == 'inactif'){
            $contact->setActivite(false);
+           
         }
 
         if($activate == 'actif'){
@@ -179,33 +180,39 @@ class ContactController extends AbstractController
     }
 
     /**
-     * @Route("/contact/{id}/deactivate", name="contact_deactivate", methods={"PUT"})
+     * @Route("/contact/deactivate/{id}", name="contact_deactivate", methods={"PUT"})
      */
     public function deactivate(Request $request, int $id): Response{
         $entityManager = $this->getDoctrine()->getManager();
         $contact = $entityManager->getRepository(Contact::class)->find($id);
 
-        $contact->setActivite($request->request->get('activite'));
-
         if (!$contact){
             return $this->json('No contact found for id ' . $id, 404);
         }
-        
+
+        $contact->setActivite($request->request->get('activite'));
+
+
         $activate = $contact->getActivite();
 
-        if($activate == 0){
-            return $this->json('Contact with id ' . $id . ' has been deactivated ' );
+        if($activate == 'inactif'){
+           $contact->setActivite(false);
+           return $this->json('The contact ' . $id . ' was successfully deactivated ' );
+           
         }
 
+        if($activate == 'actif'){
+            $contact->setActivite(true);
+         }
+
+    
+
+
         $entityManager->flush();
-        $data = [
-            'activite' => $contact->getActivite(),
 
-        ];
-
-        return $this->json($data);
+       
     }
-
+    
     /**
      * @Route("/contact/{id}", name="contact_delete", methods={"DELETE"})
      */
