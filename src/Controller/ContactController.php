@@ -46,10 +46,66 @@ class ContactController extends AbstractController
         return $this->json($data);
     }
 
-    function validating($telephone){
-        
-        
+
+     /**
+     * @Route("/contact/actif", name="contact_showActif", methods={"GET"})
+     */
+    public function showActif(): Response{
+        $contacts = $this->getDoctrine()
+            ->getRepository(Contact::class)
+            ->findAll();
+
+        $data = [];
+
+        foreach ($contacts as $contact){
+            if ($contact->getActivite() == true){
+
+                $data[] = [
+                    'id' => $contact->getId(),
+                    'nom' => $contact->getNom(),
+                    'prenom' => $contact->getPrenom(),
+                    'email' => $contact->getEmail(),
+                    'adresse' => $contact->getAdresse(),
+                    'telephone' => $contact->getTelephone(),
+                    'age' => $contact->getAge(),
+                    'activite' => $contact->getActivite(),
+                ];
+            }
+        }
+
+        return $this->json($data);
     }
+
+
+     /**
+     * @Route("/contact/inactif", name="contact_showInactif", methods={"GET"})
+     */
+    public function showInactif(): Response{
+        $contacts = $this->getDoctrine()
+            ->getRepository(Contact::class)
+            ->findAll();
+
+        $data = [];
+
+        foreach ($contacts as $contact){
+            if ($contact->getActivite() == false){
+
+                $data[] = [
+                    'id' => $contact->getId(),
+                    'nom' => $contact->getNom(),
+                    'prenom' => $contact->getPrenom(),
+                    'email' => $contact->getEmail(),
+                    'adresse' => $contact->getAdresse(),
+                    'telephone' => $contact->getTelephone(),
+                    'age' => $contact->getAge(),
+                    'activite' => $contact->getActivite(),
+                ];
+            }
+        }
+
+        return $this->json($data);
+    }
+   
 
     /**
      * @Route("/contact", name="contact_new", methods={"POST"})
@@ -117,6 +173,8 @@ class ContactController extends AbstractController
         
     }
 
+   
+
     /**
      * @Route("/contact/{id}", name="contact_edit", methods={"PUT"})
      */
@@ -150,16 +208,10 @@ class ContactController extends AbstractController
 
         $activate = $contact->getActivite();
 
-        if($activate == 'inactif'){
-           $contact->setActivite(false);
-           
-        }
-
+       
         if($activate == 'actif'){
             $contact->setActivite(true);
          }
-
-    
 
 
         $entityManager->flush();
@@ -197,19 +249,12 @@ class ContactController extends AbstractController
 
         if($activate == 'inactif'){
            $contact->setActivite(false);
-           return $this->json('The contact ' . $id . ' was successfully deactivated ' );
            
         }
-
-        if($activate == 'actif'){
-            $contact->setActivite(true);
-         }
-
-    
-
-
+        
         $entityManager->flush();
-
+        
+        return $this->json('The contact with id ' . $id . ' was successfully deactivated ' );
        
     }
     
@@ -227,6 +272,6 @@ class ContactController extends AbstractController
         $entityManager->remove($contact);
         $entityManager->flush();
 
-        return $this->json('The contact ' . $id . ' was successfully deleted ' );
+        return $this->json('The contact with id ' . $id . ' was successfully deleted ' );
     }
 }
