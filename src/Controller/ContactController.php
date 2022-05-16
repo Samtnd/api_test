@@ -50,7 +50,7 @@ class ContactController extends AbstractController
      /**
      * @Route("/contact/actif", name="contact_showActif", methods={"GET"})
      */
-    public function showActif(): Response{
+    public function showActif(): Response{  // Cette méthode va permettre de filtrer tous les contacts actif c.a.d un contact avec la valeur activite à true
         $contacts = $this->getDoctrine()
             ->getRepository(Contact::class)
             ->findAll();
@@ -80,7 +80,7 @@ class ContactController extends AbstractController
      /**
      * @Route("/contact/inactif", name="contact_showInactif", methods={"GET"})
      */
-    public function showInactif(): Response{
+    public function showInactif(): Response{ //Cette méthode va permettre de filtrer tous les contacts actif c.a.d un contact avec la valeur activite à true
         $contacts = $this->getDoctrine()
             ->getRepository(Contact::class)
             ->findAll();
@@ -110,7 +110,7 @@ class ContactController extends AbstractController
     /**
      * @Route("/contact", name="contact_new", methods={"POST"})
      */
-    public function create(Request $request): Response{
+    public function create(Request $request): Response{ // Cette méthode va permettre de créer un contact en initialisant le son activité à true
         $entityManager = $this->getDoctrine()->getManager();
         
         $contact = new Contact();
@@ -124,14 +124,15 @@ class ContactController extends AbstractController
         
         
         
-        //$contact = $entityManager->getRepository(Contact::class)->findBy($contact->getAge());
-
+        
+        // Ici je fais une vérification si le contact ajouté est un majeur
         if($contact->getAge() < 18){
             return $this->json('The contact must be of legal age to be added' , 404);
         }
 
         $telephone = $contact->getTelephone();
 
+        // Ici je vérifie que le numéro téléphone fait bien 10 chiffres
         if(preg_match('/^[0-9]{10}+$/', $telephone)) {
         } 
         else {
@@ -149,7 +150,7 @@ class ContactController extends AbstractController
     /**
      * @Route("/contact/{id}", name="contact_show", methods={"GET"})
      */
-    public function show(int $id): Response{
+    public function show(int $id): Response{ // Cette méthode affiche tous les contacts 
         $contact = $this->getDoctrine()
             ->getRepository(Contact::class)
             ->find($id);
@@ -178,7 +179,7 @@ class ContactController extends AbstractController
     /**
      * @Route("/contact/{id}", name="contact_edit", methods={"PUT"})
      */
-    public function edit(Request $request, int $id): Response {
+    public function edit(Request $request, int $id): Response { // Cette méthode va permettre de modifier toutes les informations d'un contact unique passé en paramètre
         $entityManager = $this->getDoctrine()->getManager();
         $contact = $entityManager->getRepository(Contact::class)->find($id);
 
@@ -208,7 +209,7 @@ class ContactController extends AbstractController
 
         $activate = $contact->getActivite();
 
-       
+        // Ici je fais une condition qui permer de récupérer ce que l'utilisateur entre et changer l'état de l'activité du contact en actif si il était désactivé
         if($activate == 'actif'){
             $contact->setActivite(true);
          }
@@ -234,7 +235,7 @@ class ContactController extends AbstractController
     /**
      * @Route("/contact/deactivate/{id}", name="contact_deactivate", methods={"PUT"})
      */
-    public function deactivate(Request $request, int $id): Response{
+    public function deactivate(Request $request, int $id): Response{ // Cette méthode permet de désactiver un contact donc changer l'état d'un contact en inactif(false)
         $entityManager = $this->getDoctrine()->getManager();
         $contact = $entityManager->getRepository(Contact::class)->find($id);
 
@@ -261,7 +262,7 @@ class ContactController extends AbstractController
     /**
      * @Route("/contact/{id}", name="contact_delete", methods={"DELETE"})
      */
-    public function delete(int $id): Response{
+    public function delete(int $id): Response{ // Cette méthode permet de supprimer un contact avec l'id passé en paramètre
         $entityManager = $this->getDoctrine()->getManager();
         $contact= $entityManager->getRepository(Contact::class)->find($id);
 
